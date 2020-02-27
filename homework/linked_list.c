@@ -25,19 +25,46 @@ POINTER alloc(VALUE value) {
 // How do you count the items in a linked list?
 int list_size(POINTER start) {
   // TODO, does nothing right now.
-  return -1;
+  struct ListEntry_s *temp;
+  int size = 0;
+  if(start==NULL) {
+    return 0;
+  }
+  temp = start;
+  while(temp!=NULL) {
+    size++;
+    temp = temp->next;
+  }
+  return size;
 }
 
 // How do you add an item to the end of a linked list?
 void push_back(POINTER start, VALUE value) {
   // TODO, does nothing right now.
+  struct ListEntry_s *temp;
+  temp = start;
+  while((temp->next)!=NULL) {
+    temp = temp->next;
+  }
+  POINTER new = alloc(value);
+  temp->next = new;
   return;
 }
 
 bool list_equals_array(POINTER list, double* array, int array_len) {
   if (list_size(list) != array_len) return false;
   // TODO, do this better!
-  return false;
+  struct ListEntry_s *temp;
+  temp = list;
+  int i = 0;
+  while(temp!=NULL) {
+    if(temp->value!=array[i]) {
+      return false;
+    }
+    i++;
+    temp = temp->next;
+  }
+  return true;
 }
 
 // Given a value and a list, alloc a new entry and put it on the front of this list.
@@ -54,6 +81,20 @@ POINTER push_front(VALUE value, POINTER list) {
 // the list becomes: 1->2->4->5
 bool remove_value(POINTER start, VALUE value){
   //TODO
+  struct ListEntry_s *temp;
+  temp = start;
+  if((start->value)==value){
+    start->value = (start->next)->value;
+    start->next = (start->next)->next;
+    return true;
+  }
+  while((temp->next)!=NULL) {
+    if(((temp->next)->value)==value) {
+      temp->next = (temp->next)->next;
+      return true;
+    }
+    temp = temp->next;
+  }
   return false;
 }
 
@@ -62,7 +103,15 @@ bool remove_value(POINTER start, VALUE value){
 // the list becomes: 5->4->3->2->1
 POINTER reverse_list(POINTER start){
   //TODO
-  return NULL;
+  struct ListEntry_s *temp;
+  temp = start;
+  POINTER new = alloc(start->value);
+  temp = temp->next;
+  while(temp!=NULL){
+    new = push_front(temp->value, new);
+    temp = temp->next;
+  }
+  return new;
 }
 
 // Given a list, take its first element off and put it in the free list.
